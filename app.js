@@ -203,26 +203,21 @@ window.initApp = initApp;
  * "Me" marker
  * --------------------------------------------------------------------------*/
 
+// Waze-style heading arrow: a rounded chevron pointing in the travel
+// direction. Defined pointing "up" (north); we rotate it by the heading.
+// When no heading is known yet, it simply points up.
+const ME_ARROW_PATH = "M 0,-11 L 8,9 Q 0,4 -8,9 Z";
+
 function meSymbol(heading) {
-  // A directional chevron when we have a heading, else a simple dot.
-  if (heading == null || isNaN(heading)) {
-    return {
-      path: google.maps.SymbolPath.CIRCLE,
-      scale: 8,
-      fillColor: "#1a73e8",
-      fillOpacity: 1,
-      strokeColor: "#fff",
-      strokeWeight: 3,
-    };
-  }
   return {
-    path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-    scale: 6,
-    rotation: heading,
+    path: ME_ARROW_PATH,
+    rotation: heading == null || isNaN(heading) ? 0 : heading,
+    scale: 1.7,
     fillColor: "#1a73e8",
     fillOpacity: 1,
-    strokeColor: "#fff",
-    strokeWeight: 2,
+    strokeColor: "#ffffff",
+    strokeWeight: 2.5,
+    anchor: new google.maps.Point(0, 0),
   };
 }
 
