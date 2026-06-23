@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>FootNav — Interactive Walking Navigation (Google Maps)</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ===================== MAP ===================== -->
+  <div id="map"></div>
+
+  <!-- ===================== DASHBOARD ===================== -->
+  <!-- This panel stands in for "my dashboard" where the destination is chosen. -->
+  <aside id="dashboard" class="panel">
+    <header class="panel__header">
+      <h1>🚶 FootNav</h1>
+      <p class="panel__subtitle">Interactive walking navigation — example demo</p>
+    </header>
+
+    <section class="dash-section">
+      <label class="field-label" for="search">Search a destination</label>
+      <div class="search-row">
+        <input id="search" type="text" placeholder="e.g. Eiffel Tower, Paris" autocomplete="off" />
+      </div>
+      <p class="search-hint">Start typing and pick a Google Places suggestion.</p>
+    </section>
+
+    <section class="dash-section">
+      <span class="field-label">Or pick a saved place</span>
+      <div id="presets" class="presets"></div>
+    </section>
+
+    <section class="dash-section dash-hint">
+      💡 You can also <strong>tap anywhere on the map</strong> to drop a destination.
+    </section>
+
+    <section id="tripSummary" class="trip-summary" hidden>
+      <div class="trip-summary__row">
+        <div class="trip-stat">
+          <span class="trip-stat__value" id="tripDistance">—</span>
+          <span class="trip-stat__label">distance</span>
+        </div>
+        <div class="trip-stat">
+          <span class="trip-stat__value" id="tripDuration">—</span>
+          <span class="trip-stat__label">walk time</span>
+        </div>
+        <div class="trip-stat">
+          <span class="trip-stat__value" id="tripArrival">—</span>
+          <span class="trip-stat__label">arrival</span>
+        </div>
+      </div>
+      <button id="startBtn" class="btn btn--primary btn--block">Start navigation</button>
+    </section>
+
+    <footer class="panel__footer">
+      Powered by Google Maps Platform
+    </footer>
+  </aside>
+
+  <!-- ===================== NAVIGATION HUD ===================== -->
+  <!-- Shown during active turn-by-turn navigation (Google Maps / Waze style). -->
+  <div id="navHud" class="nav-hud" hidden>
+    <div class="nav-banner">
+      <div class="nav-banner__icon" id="maneuverIcon">↑</div>
+      <div class="nav-banner__text">
+        <div class="nav-banner__distance" id="maneuverDistance">—</div>
+        <div class="nav-banner__instruction" id="maneuverText">Starting…</div>
+      </div>
+    </div>
+
+    <div class="nav-then" id="navThen" hidden>
+      then <span id="navThenIcon">↑</span> <span id="navThenText"></span>
+    </div>
+
+    <div class="nav-footer">
+      <div class="nav-footer__stats">
+        <span id="hudEta" class="hud-eta">—</span>
+        <span class="hud-sep">·</span>
+        <span id="hudRemaining">—</span>
+      </div>
+      <div class="nav-footer__actions">
+        <button id="voiceBtn" class="icon-btn" title="Toggle voice guidance">🔊</button>
+        <button id="recenterBtn" class="icon-btn" title="Recenter">🎯</button>
+        <button id="endBtn" class="btn btn--danger">End</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== ARRIVAL ===================== -->
+  <div id="arrival" class="arrival" hidden>
+    <div class="arrival__card">
+      <div class="arrival__emoji">🎉</div>
+      <h2>You have arrived!</h2>
+      <p id="arrivalDest">Destination reached.</p>
+      <button id="arrivalClose" class="btn btn--primary">Done</button>
+    </div>
+  </div>
+
+  <!-- ===================== DEMO CONTROLS ===================== -->
+  <!-- Lets you experience navigation on a desktop by simulating walking. -->
+  <div id="demoBar" class="demo-bar">
+    <button id="simulateBtn" class="chip" title="Simulate walking the route">▶ Simulate walk</button>
+    <button id="gpsBtn" class="chip chip--active" title="Use real GPS">📍 Real GPS</button>
+  </div>
+
+  <!-- Toast / status messages -->
+  <div id="toast" class="toast" hidden></div>
+
+  <!-- ===================== Google Maps loader =====================
+       Replace YOUR_GOOGLE_MAPS_API_KEY below (or set it in config.js).
+       Required APIs in your Google Cloud project:
+         • Maps JavaScript API
+         • Directions API
+         • Places API
+       Libraries we use: places (search), geometry (distance/heading), marker. -->
+  <script src="config.js"></script>
+  <script>
+    (function loadGoogleMaps() {
+      var key = (window.FOOTNAV_CONFIG && window.FOOTNAV_CONFIG.googleMapsApiKey) || "YOUR_GOOGLE_MAPS_API_KEY";
+      if (key === "YOUR_GOOGLE_MAPS_API_KEY") {
+        document.addEventListener("DOMContentLoaded", function () {
+          var t = document.getElementById("toast");
+          t.hidden = false;
+          t.innerHTML = "⚠️ Add your Google Maps API key in <b>config.js</b> to load the map.";
+        });
+      }
+      var s = document.createElement("script");
+      s.src = "https://maps.googleapis.com/maps/api/js?key=" + key +
+              "&libraries=places,geometry,marker&loading=async&callback=initApp";
+      s.async = true;
+      document.head.appendChild(s);
+    })();
+  </script>
+  <script src="app.js"></script>
+</body>
+</html>
